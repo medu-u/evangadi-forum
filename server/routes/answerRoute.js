@@ -1,15 +1,10 @@
 import express from "express";
-import { getAnswers } from "../controllers/answerController";
+import { getAnswers } from "../controller/answerController.js";
 
-const getAnswerRouter = express.Router();
+
+const router = express.Router();
 
 // GET /api/answer/:question_id
-getAnswerRouter.get("/answer/:question_id", async (req, res, next) => {
-    try {
-        await getAnswers(req, res);
-    } catch (error) {
-    next(error);
-    }
-});
+router.get("/answer/:question_id", getAnswers);
 
-export default getAnswerRouter;
+export default router;
