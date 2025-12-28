@@ -1,4 +1,5 @@
-// database connection to be imported from  collaborators 
+// database connection to be imported from  collaborators
+import dbConnection from "../DB/dbconfig.js";
 import { StatusCodes } from "http-status-codes";
 
 async function getAllQuestions(req, res) {
