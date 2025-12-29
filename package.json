@@ -1,4 +1,7 @@
 {
+  "dependencies": {
+    "mysql2": "^3.16.0"
+  }
   "name": "evangadi-forum",
   "version": "1.0.0",
   "type": "module",
