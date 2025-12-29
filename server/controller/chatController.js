@@ -1,39 +1,63 @@
-import dotenv from "dotenv";
 import OpenAI from "openai";
+import db from "../DB/dbconfig.js"; 
+import dotenv from "dotenv";
 
 dotenv.config();
-
-// ==> setup conversation handler client
 const client = new OpenAI({
-  apiKey: process.env.GROQ_API_KEY,
+  apiKey: process.env.OPENAI_API_KEY,
   baseURL: "https://api.groq.com/openai/v1",
 });
 
 export const getChatResponse = async (req, res) => {
-  const SYSTEM_PROMPT = `
-  You are a high-efficiency AI assistant. 
-  RULES:
-  1. Be direct. Do not use filler phrases like "Here is the solution" or "I hope this helps."
-  2. For code, provide the code block immediately with brief comments explaining the logic.
-  3. For explanations, use bullet points and bold text for readability.
-  4. If the answer is short, keep it short. If it requires depth, provide depth without fluff.
-  5. Maintain context of the previous conversation. 
-  `;
-
   const { prompt } = req.body;
-  const model = "llama-3.3-70b-versatile";
-  const input = SYSTEM_PROMPT + prompt;
+
+  if (!prompt) {
+    return res.status(400).json({ error: "userid and prompt are required." });
+  }
+
+  // const {userid} = req.user;
+  const userid = "2234";
+
   try {
-    const response = await client.responses.create({
-      model,
-      input,
+    const [history] = await db.execute(
+      `SELECT role, content FROM chat_history 
+       WHERE userid = ? 
+       ORDER BY chatid DESC LIMIT 10`,
+      [userid]
+    );
+
+    console.log("history", history)
+
+    const conversationContext = history.reverse();
+
+    const SYSTEM_PROMPT = {
+      role: "system",
+      content: "You are a direct, high-efficiency AI assistant. No fluff.",
+    };
+
+    // 3. Construct the message array
+    const messages = [
+      SYSTEM_PROMPT,
+      ...conversationContext,
+      { role: "user", content: prompt },
+    ];
+
+    // 4. Call Groq API
+    const completion = await client.chat.completions.create({
+      messages,
+      model: "llama-3.3-70b-versatile",
       temperature: 0.2,
-      max_output_tokens: 1024,
+      max_tokens: 1024,
     });
-    const answer = response.output_text;
-    res.json({ answer });
-  } catch (err) {
-    console.log("error: ", err);
-    res.json({ error: "Failed to generate a response." });
+
+    const aiResponse = completion.choices[0].message.content;
+
+    const insertQuery = `INSERT INTO chat_history (userid, role, content) VALUES (?, 'user', ?), (?, 'assistant', ?)`;
+    await db.execute(insertQuery, [userid, prompt, userid, aiResponse]);
+
+    res.json({ answer: aiResponse });
+  } catch (error) {
+    console.error("Chat Error:", error);
+    res.status(500).json({ error: "Internal Server Error" });
   }
 };
