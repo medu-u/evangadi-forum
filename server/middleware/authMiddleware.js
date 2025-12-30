@@ -1,5 +1,5 @@
-const { StatusCodes } = require("http-status-codes");
-const jwt = require("jsonwebtoken");
+import { StatusCodes } from "http-status-codes";
+import jwt from "jsonwebtoken";
 
 async function authMiddleware(req, res, next) {
   const authHeader = req.headers.authorization;
@@ -11,8 +11,7 @@ async function authMiddleware(req, res, next) {
   }
 
   const token = authHeader.split(" ")[1];
-  // console.log("Authorization Header:", authHeader);
-  // console.log("Extracted Token:", token);
+
   try {
     const { username, userid } = jwt.verify(token, process.env.JWT_SECRET);
     req.user = { username, userid };
@@ -25,4 +24,4 @@ async function authMiddleware(req, res, next) {
   }
 }
 
-module.exports = authMiddleware;
+export default authMiddleware;
