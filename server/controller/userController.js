@@ -34,7 +34,7 @@ const login = async (req, res) => {
         .status(StatusCodes.UNAUTHORIZED)
         .json({ msg: "Invalid Credentials" });
     }
-
+    
     // generate token
     const username = user.username;
     const userid = user.userid;
