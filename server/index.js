@@ -1,6 +1,9 @@
 import express from "express";
 import dotenv from "dotenv";
+import userRoutes from  './routes/userRoutes.js'
+import postQuestionRouter from './routes/postQuestionRoute.js'
 import answerRoutes from "./routes/answerRoute.js";
+import authMiddleware from "./middleware/authMiddleware.js";
 import userRoutes from "./routes/userRoutes.js";
 import chatRoutes from "./routes/chatRoutes.js";
 import questionRoutes from "./routes/questionRoute.js";
@@ -20,6 +23,15 @@ app.use(express.json());
 app.use("/api/question", authMiddleware, questionRoutes);
 
 //userRoutes middleware
+
+app.use("/api", answerRoutes);
+
+// postQuestionRoutes middleware
+app.use('/api',postQuestionRouter);
+
+app.listen(PORT, () => {
+  console.log(`Server is running on port: http://localhost:${PORT}`);
+});
 app.use("/api/user", userRoutes);
 
 //chatRoutes middleware
