@@ -2,6 +2,7 @@ import express from "express";
 import dotenv from "dotenv";
 import answerRoutes from "./routes/answerRoute.js";
 import userRoutes from "./routes/userRoutes.js";
+import chatRoutes from "./routes/chatRoutes.js";
 import questionRoutes from "./routes/questionRoute.js";
 import authMiddleware from "./middleware/authMiddleware.js";
 import dbconnection from "./DB/dbconfig.js";
@@ -20,6 +21,9 @@ app.use("/api/question", authMiddleware, questionRoutes);
 
 //userRoutes middleware
 app.use("/api/user", userRoutes);
+
+//chatRoutes middleware
+app.use("/api/chat", authMiddleware, chatRoutes);
 
 // answerRoutes middlware
 app.use("/api/answer", authMiddleware, answerRoutes);
