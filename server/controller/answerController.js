@@ -45,11 +45,19 @@ const [answers] = await dbConnection.query(
     });
     }
 };
-
-// Add initial postAnswer function structure 
+ 
 
 const postAnswer = async (req, res) => {
   const { question_id, answer } = req.body;
 
+
+    // validate input
+  if (!question_id || !answer) {
+    return res.status(StatusCodes.BAD_REQUEST).json({
+      message: "question_id and answer are required",
+    });
+
 }
+
+};
 export { getAnswers,postAnswer };
