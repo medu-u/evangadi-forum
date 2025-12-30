@@ -4,9 +4,15 @@ import dotenv from "dotenv";
 import answerRoutes from "./routes/answerRoute.js";
 import userRoutes from "./routes/userRoutes.js";
 import questionRoutes from "./routes/questionRoute.js";
+import authMiddleware from "./middleware/authMiddleware.js";
 
 const app = express();
 
+// CORS configuration
+app.use(cors({
+  origin: ["http://localhost:3000", "http://localhost:5173", "http://localhost:4173"],
+  credentials: true
+}));
 
 app.use(express.json());
 
