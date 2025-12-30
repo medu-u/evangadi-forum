@@ -58,6 +58,12 @@ const postAnswer = async (req, res) => {
     });
 
 }
+ const questionIdNum = parseInt(question_id, 10);
+  if (isNaN(questionIdNum)) {
+    return res.status(StatusCodes.BAD_REQUEST).json({
+      message: "Invalid question_id",
+    });
+}
 
 };
 export { getAnswers,postAnswer };
