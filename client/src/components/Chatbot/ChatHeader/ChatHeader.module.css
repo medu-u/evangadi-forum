@@ -1,0 +1,75 @@
+.header {
+  background-color: #ffffff;
+  border-bottom: 1px solid #e5e7eb; /* Light gray border like your question cards */
+  padding: 1rem 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  border-top-left-radius: 8px; /* Assuming it's a popup */
+  border-top-right-radius: 8px;
+}
+
+.indicatorWrapper {
+  position: relative;
+  width: 10px;
+  height: 10px;
+}
+
+.statusDot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  transition: all 0.5s ease;
+}
+
+/* Matching your "Ask Question" blue and a standard online green */
+.idle {
+  background-color: #4b6bfb; /* Indigo/Blue accent */
+  box-shadow: 0 0 8px rgba(75, 107, 251, 0.3);
+}
+
+.typing {
+  background-color: #10b981; /* Emerald green for active state */
+  box-shadow: 0 0 8px rgba(16, 185, 129, 0.3);
+}
+
+.ping {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  opacity: 0.3;
+  animation: ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+.info {
+  display: flex;
+  flex-direction: column;
+}
+
+.info h2 {
+  font-weight: 600;
+  color: #1a202c; /* Dark text for readability */
+  font-size: 0.9rem;
+  margin: 0;
+  font-family: inherit; /* Uses your forum's font */
+}
+
+.info p {
+  font-size: 11px;
+  color: #718096; /* Gray text like your usernames */
+  margin: 0;
+  font-weight: 400;
+}
+
+@keyframes ping {
+  75%, 100% {
+    transform: scale(2.5);
+    opacity: 0;
+  }
+}
