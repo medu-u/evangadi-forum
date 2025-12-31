@@ -1,10 +1,18 @@
 import express from "express";
+<<<<<<< HEAD
 import { login, register, checkUser } from "../controller/userController.js";
 import authMiddleware from "../middleware/authMiddleware.js";
+=======
+import authMiddleware from "../middleware/authMiddleware.js";
+import { login, register, checkUser } from "../controller/userController.js";
+>>>>>>> origin
 
 const router = express.Router();
 
+
 router.post("/login", login);
+router.get("/check", authMiddleware, checkUser);
+router.post("/register", register);
 
 // Register Route
 router.post("/register", register);

@@ -1,28 +1,53 @@
 import express from "express";
+import cors from "cors";
 import dotenv from "dotenv";
+import answerRoutes from "./routes/answerRoute.js";
 import userRoutes from "./routes/userRoutes.js";
+import questionRoutes from "./routes/questionRoute.js";
+import authMiddleware from "./middleware/authMiddleware.js";
+import chatRoutes from "./routes/chatRoutes.js";
+import dbconnection from "./DB/dbconfig.js";
 
 const app = express();
 
-dotenv.config();
+// CORS configuration
+app.use(
+  cors({
+    origin: [
+      "http://localhost:3000",
+      "http://localhost:5173",
+      "http://localhost:4173",
+    ],
+    credentials: true,
+  })
+);
 
-const PORT = process.env.PORT || 3000;
-
-//json packing middleware
 app.use(express.json());
 
-// question routes midware file
-import questionRoutes from "./routes/questionRoute.js";
-// question routes midware
+dotenv.config();
+const PORT = process.env.PORT || 5500;
+
+// question routes middleware
 app.use("/api/question", questionRoutes);
 
-// Mount the user routes
+// userRoutes middleware
 app.use("/api/user", userRoutes);
 
-import answerRoutes from "./routes/answerRoute.js";
+// chatRoutes middleware
+app.use("/api/chat", authMiddleware, chatRoutes);
 
-app.use("/api/answer", answerRoutes);
+// answerRoutes middleware
+app.use("/api/answer", authMiddleware, answerRoutes);
 
-app.listen(PORT, () => {
-  console.log(`Server is running on port: http://localhost:${PORT}`);
-});
+async function startServer() {
+  try {
+    await dbconnection.execute("SELECT 'test'");
+    console.log("Database connected...");
+    app.listen(PORT);
+    console.log(`Server running on: http://localhost:${PORT}`);
+  } catch (error) {
+    console.log("Database connection failed: ", error.message);
+  }
+}
+
+startServer();

@@ -1,37 +1,98 @@
-import dbconnection from "../DB/dbconfig.js";
 import { StatusCodes } from "http-status-codes";
+import dbConnection from "../DB/dbconfig.js";
 
-const postAnswerForQuestion = async (req, res) => {
-  const { questionid, answer } = req.body;
+const getAnswers = async (req, res) => {
+  const { question_id } = req.params;
 
-  console.log("Question ID:", questionid);
-  console.log("Answer:", answer);
-
-  if (!questionid || !answer) {
+  // validate question_id
+  const questionIdNum = parseInt(question_id, 10);
+  if (isNaN(questionIdNum)) {
     return res.status(StatusCodes.BAD_REQUEST).json({
-      error: "Bad Request",
-      message: "Please provide both question ID and answer.",
+      message: "Invalid question_id",
     });
   }
 
   try {
-    const createdBy = req.user.userid;
-
-    await dbconnection.execute(
-      "INSERT INTO answers (questionid, userid, answer) VALUES (?, ?, ?)",
-      [questionid, createdBy, answer]
+    // check if question exists
+    const [question] = await dbConnection.query(
+      "SELECT questionid FROM questions WHERE questionid = ?",
+      [questionIdNum]
     );
 
-    return res
-      .status(StatusCodes.CREATED)
-      .json({ message: "Answer posted successfully" });
+    if (question.length === 0) {
+      return res.status(StatusCodes.NOT_FOUND).json({
+        message: "Question not found",
+      });
+    }
+
+    // get answers
+    const [answers] = await dbConnection.query(
+      `SELECT 
+        a.answerid AS answer_id,
+        a.answer AS content,
+        u.username AS user_name
+    FROM answers a
+    JOIN users u ON a.userid = u.userid
+    WHERE a.questionid = ?`,
+      [questionIdNum]
+    );
+
+    return res.status(StatusCodes.OK).json({ answers });
   } catch (error) {
-    console.error("Error posting answer:", error);
+    console.error("Error getting answers:", error);
     return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-      error: "Internal Server Error",
-      message: "An unexpected error occurred.",
+      message: "Internal server error",
     });
   }
 };
 
-export { postAnswerForQuestion };
+const postAnswer = async (req, res) => {
+  const { question_id, answer } = req.body;
+
+  // validate input
+  if (!question_id || !answer) {
+    return res.status(StatusCodes.BAD_REQUEST).json({
+      message: "question_id and answer are required",
+    });
+  }
+
+  const questionIdNum = parseInt(question_id, 10);
+  if (isNaN(questionIdNum)) {
+    return res.status(StatusCodes.BAD_REQUEST).json({
+      message: "Invalid question_id",
+    });
+  }
+
+  try {
+    // check if question exists
+    const [question] = await dbConnection.query(
+      "SELECT questionid FROM questions WHERE questionid = ?",
+      [questionIdNum]
+    );
+
+    if (question.length === 0) {
+      return res.status(StatusCodes.NOT_FOUND).json({
+        message: "Question not found",
+      });
+    }
+
+    // get logged-in user
+    const userId = req.user.userid;
+
+    // insert answer
+    await dbConnection.query(
+      "INSERT INTO answers (questionid, userid, answer) VALUES (?, ?, ?)",
+      [questionIdNum, userId, answer]
+    );
+
+    return res.status(StatusCodes.CREATED).json({
+      message: "Answer posted successfully",
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+      message: "Internal server error",
+    });
+  }
+};
+export { getAnswers, postAnswer };
