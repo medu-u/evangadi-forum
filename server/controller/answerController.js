@@ -86,9 +86,8 @@ const getAnswerSummary = async (req, res) => {
 
            // 2. Prepare the payload for AI
     // Prepare answers payload for AI summarization
-           const allAnswersText = answers
-    .map((a, i) => Answer ${i + 1}: ${a.answer})
-    .join("\n\n");
+    const allAnswersText = answers
+    .map((a, i) => Answer ${i + 1}: ${a.answer}).join("\n\n");
 
     const prompt = `
     You are an expert forum moderator. Below is a question and a list of answers.
@@ -101,6 +100,13 @@ const getAnswerSummary = async (req, res) => {
     Answers:
     ${allAnswersText}
 `;
+
+   // 3. Request AI Summary
+   const completion = await client.chat.completions.create({
+    model: "llama-3.3-70b-versatile",
+    messages: [{ role: "user", content: prompt }],
+    temperature: 0.3, // Lower temperature for more factual summaries
+  });
 
 
 const postAnswer = async (req, res) => {
