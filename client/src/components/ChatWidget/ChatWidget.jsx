@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { MessageCircle, X } from "lucide-react";
 import styles from "./ChatWidget.module.css";
+import ChatBot from "./ChatBot/chatBot";
 
 function ChatWidget() {
   const [isOpen, setIsOpen] = useState(false);
