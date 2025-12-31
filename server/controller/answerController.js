@@ -66,9 +66,16 @@ const getAnswerSummary = async (req, res) => {
         );
 
         const [answers] = await dbConnection.query(
-            "SELECT answer FROM answers WHERE questionid = ?",
+            "SELECT answer FROM answers WHERE question_id = ?",
             [question_id]
           );
+
+          if (question.length === 0) {
+            return res
+              .status(StatusCodes.NOT_FOUND)
+              .json({ message: "Question not found" });
+          }
+
 
 const postAnswer = async (req, res) => {
 const { question_id, answer } = req.body;
