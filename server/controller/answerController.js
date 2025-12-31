@@ -173,4 +173,4 @@ try {
     });
 }
 };
-export { getAnswers,postAnswer };
+export { getAnswers, postAnswer, getAnswerSummary };
