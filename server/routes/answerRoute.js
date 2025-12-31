@@ -11,6 +11,6 @@ router.get("/:question_id", getAnswers);
 router.get("/:question_id/summary", getAnswerSummary);
 
 // POST /api/answer
-router.post("/answer", authMiddleware, postAnswer);
+router.post("/", authMiddleware, postAnswer);
 
 export default router;
