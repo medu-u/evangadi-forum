@@ -1,7 +1,10 @@
 import express from "express";
-import { getAnswers , getAnswerSummary, postAnswer} from "../controller/answerController.js";
+import {
+  getAnswers,
+  getAnswerSummary,
+  postAnswer,
+} from "../controller/answerController.js";
 import authMiddleware from "../middleware/authMiddleware.js";
-
 
 const router = express.Router();
 

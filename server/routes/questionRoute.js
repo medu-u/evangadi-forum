@@ -3,7 +3,7 @@ const router = Router();
 import {
   getAllQuestions,
   getSingleQuestion,
-  postQuestion
+  postQuestion,
 } from "../controller/questionController.js";
 
 router.get("/", getAllQuestions);
