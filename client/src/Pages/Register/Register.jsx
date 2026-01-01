@@ -1,12 +1,35 @@
 import React from 'react'
-
+import axios from '../../axiosConfig'
+import { useRef } from 'react';
 const Register = () => {
+    const userNameDom = useRef();
+    const firstNameDom = useRef();
+    const lastNameDom = useRef();
+    const emailDom = useRef();
+    const passwordDom = useRef();
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        try {
+            await axios.post('/user/register', {
+                username: "",
+                firstName: "",
+                lastName: "",
+                email: "",
+                password: ""
+            });
+            
+        } catch (error) {
+            console.log(error.response)
+
+            
+        }
+    };
   return (
     <section>
-        <form action="">
+        <form action="" onSubmit={handleSubmit}>
 <div>
     <span>username : </span>
-    <input type="text" placeholder='username' />
+    <input type="text" placeholder='username' ref={userNameDom} />
 </div>
 <br />
 <div>
