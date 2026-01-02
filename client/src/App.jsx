@@ -1,3 +1,16 @@
+import Register from "./Pages/Register/Register"
+import { Router } from "react-router-dom"
+function App() {
+
+  return (
+    <>
+      <Register />
+    </>
+  )
+}
+
+export default App
+
 import { useEffect, useState, createContext } from "react";
 import { Routes, Route, useNavigate } from "react-router-dom";
 import Layout from "./components/Layout/Layout";
@@ -36,6 +49,7 @@ function App() {
       <Routes>
         {/* Public Route */}
         <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Register />} />
 
         {/* Protected Routes */}
         <Route path="/*" element={<Layout />} />
