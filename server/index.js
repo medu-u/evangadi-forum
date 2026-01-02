@@ -2,7 +2,7 @@ import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import answerRoutes from "./routes/answerRoute.js";
-import userRoutes from "./routes/userRoutes.js";
+import userRoutes from "./routes/userRoute.js";
 import questionRoutes from "./routes/questionRoute.js";
 import authMiddleware from "./middleware/authMiddleware.js";
 import chatRoutes from "./routes/chatRoutes.js";

@@ -3,10 +3,10 @@ import express from "express";
 const app = express();
 
 const dbConnection = mysql2.createPool({
-  host: "localhost",
-  user: "evangadi-forum",
-  password: "123456",
-  database: "evangadi-forum-DB",
+  host: process.env.HOST,
+  user: process.env.USER,
+  password: process.env.PASSWORD,
+  database: process.env.DATABASE,
   connectionLimit: 11,
 });
 
