@@ -18,6 +18,54 @@ const Askquestion = () => {
   const [success, setSuccess] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false); 
 
+
+
+  // redirect to login if not authenticated
+  useEffect(() => {
+    if (!token || !user) {
+      navigate("/login");
+    }
+  }, [token, user, navigate]);
+
+
+  // handles form submission
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    setError("");
+    setSuccess("");
+
+    // validate that required fields are filled
+    if(!title.trim()){
+      setError("Title is required");
+      return;
+    }
+
+    if(!description.trim()){
+      setError("Description is required");
+      return;
+    }
+
+    if(title.length > 200){
+      setError("Title cannot exceed 200 characters");
+      return;
+    }
+
+    if(tag && tag.length > 20){
+      setError("Tag cannot exceed 20 characters");
+      return;
+    }
+
+
+    if(!token){
+      setError("You must be logged in to post a question");
+      navigate("/login");
+      return;
+    }
+    setIsSubmitting(true);
+  };
+
+
   return (
     <div className={classes.container}>
       {/* This section provides guidance on how to write a good question */}
