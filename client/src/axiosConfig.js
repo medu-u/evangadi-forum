@@ -1,8 +1,5 @@
-
 import axios from 'axios'
-
 const axiosBase = axios.create({
-    baseURL: "/api"  // ← Change this to relative path (remove http://localhost:5500)
+    baseURL: "http://localhost:5500/api"
 })
-
 export default axiosBase;

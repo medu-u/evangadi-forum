@@ -1,4 +1,7 @@
 
+*{
+    margin: 0;
+}
 .registerPage{
     margin-top: 100px;
     background-image: url('../../assets/download.svg');
