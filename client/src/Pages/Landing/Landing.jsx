@@ -8,9 +8,9 @@ import Login from "../Login/Login";
 function Landing() {
   const { mode } = useParams();
 
-  if (mode !== "signin" && mode !== "signup") {
-    return <Navigate to="/signin" replace />;
-  }
+  // if (mode !== "signin" && mode !== "signup") {
+  //   return <Navigate to="/signin" replace />;
+  // }
 
   const isSignup = mode === "signup";
 

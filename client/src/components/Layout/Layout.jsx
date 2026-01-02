@@ -4,19 +4,19 @@ import Landing from '../../Pages/Landing/Landing';
 import SharedLayout from './SharedLayout';
 // import Home from '../../Pages/Home/Home'
 import HowItWorks from '../../Pages/HowItWorks/HowItWorks'
+import NotFound from '../../Pages/NotFound/NotFound'
 
 function Layout() {
   return (
     <Routes>
       <Route path="/" element={<SharedLayout />}>
         <Route index element={
-          <p>home</p>
+          <></>
         } />
         <Route path="/:mode" element={<Landing />} />
         <Route path='/howitworks' element={<HowItWorks/>}/>
       </Route>
-
-    
+<Route path='*' element={<NotFound/>}/>
     </Routes>
   );
 }
