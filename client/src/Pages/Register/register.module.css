@@ -5,7 +5,8 @@
 .registerPage{
     margin-top: 100px;
     /* background-image: url('../../assets/download.svg');
-    background-repeat: no-repeat; */
+    background-repeat: no-repeat;  */
+    /* the background image is not needed here */
     width: cover;
 }
 /* PAGE SECTION */
@@ -13,7 +14,8 @@
   min-height: 100vh;
   display: flex;
   align-items: center;
-  padding-left: 80px; /* pushes form from left like screenshot */
+  /* padding-left: 80px; */ 
+   /* pushes form from left like screenshot */
   /* background: linear-gradient(
     135deg,
     #c6d7ff 0%,
