@@ -1,4 +1,4 @@
-import dbConnection from "../DB/dbconfig.js";
+import dbConnection from "../db/dbConfig.js";
 import { StatusCodes } from "http-status-codes";
 import xss from 'xss'
 

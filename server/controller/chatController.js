@@ -1,5 +1,5 @@
 import OpenAI from "openai";
-import db from "../DB/dbconfig.js"; 
+import db from "../db/dbConfig.js"; 
 import dotenv from "dotenv";
 
 dotenv.config();
