@@ -7,10 +7,10 @@
 .content {
   max-width: 600px;
   margin: 0 auto;
-  background-color: #ffffff;
+  background-color: transparent;
   padding: 40px;
   border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+ 
 }
 
 .label {
@@ -23,12 +23,12 @@
   font-size: 40px;
   font-weight: 700;
   margin-bottom: 20px;
-  color: #333;
+  color: #4B456F;
 }
 
 .text {
   line-height: 1.7;
-  color: #555;
+  color: #1b171b;
   margin-bottom: 18px;
 }
 
