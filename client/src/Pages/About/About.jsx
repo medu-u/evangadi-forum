@@ -1,6 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import classes from "./about.module.css";
+import { Link } from "react-router-dom";
 
 const About = () => {
   const navigate = useNavigate();
@@ -25,12 +26,9 @@ const About = () => {
           network here.
         </p>
 
-        <button
-          className={classes.button}
-          onClick={() => navigate("/how-it-works")}
-        >
-          HOW IT WORKS
-        </button>
+        <Link to="/how-it-works">
+          <button className={classes.button}>HOW IT WORKS</button>
+        </Link>
       </div>
     </section>
   );
