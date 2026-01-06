@@ -23,9 +23,10 @@ function Answer() {
   // Redirect if not logged in
   useEffect(() => {
     if (!token) {
-      navigate("/login", { state: { from: "/answer" } });
+      navigate("/login", { state: { from: `/question/${question_id}` } });
     }
-  }, [token, navigate, answer]);
+  }, [token, navigate, question_id]);
+
 //    // Fetch question, answers, and AI summary
   useEffect(() => {
     const fetchData = async () => {
@@ -37,11 +38,13 @@ function Answer() {
           headers: { Authorization: `Bearer ${token}` },
         });
         setQuestion(Question.data);
+
         // 2. Fetch answers
         const Answers = await axios.get(`/answer/${question_id}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         setAnswers(Answers.data.answers);
+
         // 3. Fetch AI summary
         const Summary = await axios.get(`/answer/summary/${question_id}`, {
           headers: { Authorization: `Bearer ${token}` },
@@ -49,10 +52,11 @@ function Answer() {
         setAiSummary(Summary.data.summary);
         setError(null);
 
-        // Navigate to home or question page
-        //   navigate("/", { replace: true });
-        // Alternatively, navigate to the question detail page:
-        navigate(`/question/${response.data.questionId}`);
+        // // Navigate to home or question page
+        // //   navigate("/", { replace: true });
+        // // Alternatively, navigate to the question detail page:
+        // navigate(`/question/${response.data.questionId}`);
+        
       } catch (err) {
         if (err.response?.status === 404) {
           setError("Question not found.");
@@ -82,7 +86,7 @@ function Answer() {
         "/answer",
         {
           question_id: Number(question_id),
-          answer: answerText.trim(),
+         answer: answerText.trim(),
         },
         {
           headers: {

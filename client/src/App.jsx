@@ -50,7 +50,6 @@ function App() {
           {/* Protected Routes */}
           <Route path="/*" element={<Layout />} />
           <Route path="/ask" element={<Askquestion />} />
-          <Route path="/answer" element={<Answer />} />
         </Routes>
         <Footer />
       </div>
