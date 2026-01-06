@@ -7,9 +7,9 @@ import Login from "./Pages/Login/Login";
 import axios from "./Api/axiosConfig";
 import Footer from "./components/Footer/Footer";
 import Header from "./components/Header/Header";
-import Askquestion from "../src/Pages/Askquestion/Askquestion"
+import Askquestion from "../src/Pages/Askquestion/Askquestion";
 
-
+export const AppState = createContext();
 
 function App() {
   const navigate = useNavigate();
