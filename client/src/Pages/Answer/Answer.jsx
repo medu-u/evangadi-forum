@@ -9,9 +9,13 @@ const {question_id}= useParams();
 const navigate = useNavigate();
 // 
 const token = localStorage.getItem("token");
+
 const [answer, setAnswers]= useState([]);
 const [loading, setLoading]= useState(false);
-// Fetch answers
+const [answerText, setAnswerText]= useState("");
+const [error, setError]=useState(null);
+
+//1. Fetch answers
 useEffect(() => {
         const fetchAnswers = async () => {
           try {
@@ -35,6 +39,31 @@ useEffect(() => {
     
         fetchAnswers();
       }, [question_id, token]);
+
+    //   2. Submit answer
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!answerText.trim()) {
+      setError("Please provide an answer.");
+      return;
+    }
+
+    try {
+      setLoading(true);
+      await axios.post(
+        "/answer",
+        {
+          questionid: Number(question_id),
+          answer: answerText.trim(),
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
 
   return (
    
