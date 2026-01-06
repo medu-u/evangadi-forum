@@ -1,17 +1,47 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
+import { useNavigate, useParams } from 'react-router-dom'
+import axios from '../../Api/axiosConfig';
 
 function Answer() {
+    // How React knows WHICH question to load
+const {question_id}= useParams();
+// for use of redirecting
+const navigate = useNavigate();
+// 
+const token = localStorage.getItem("token");
+const [answer, setAnswers]= useState([]);
+const [loading, setLoading]= useState(false);
+// Fetch answers
+useEffect(() => {
+        const fetchAnswers = async () => {
+          try {
+            setLoading(true);
+            const res = await axios.get(`/answer/${question_id}`, {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            });
+            setAnswers(res.data.answers);
+          } catch (err) {
+            if (err.response?.status === 404) {
+              setError("Question not found.");
+            } else {
+              setError("Failed to load answers.");
+            }
+          } finally {
+            setLoading(false);
+          }
+        };
+    
+        fetchAnswers();
+      }, [question_id, token]);
+
   return (
-    <div>
-   answer
-    </div>
+   
   )
 }
 
 export default Answer
-
-
-
 
 
 
