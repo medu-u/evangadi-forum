@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "../../Api/axiosConfig";
-import styles from './answer.module.css'
+import styles from "./answer.module.css";
 
 function Answer() {
   // How React knows WHICH question to load
@@ -108,7 +108,8 @@ function Answer() {
         <textarea
           rows="6"
           value={answerText}
-          onChange={(e) => {setAnswerText(e.target.value);
+          onChange={(e) => {
+            setAnswerText(e.target.value);
             if (error) setError(null);
           }}
           placeholder="Write your answer here..."
@@ -123,4 +124,3 @@ function Answer() {
 }
 
 export default Answer;
-
