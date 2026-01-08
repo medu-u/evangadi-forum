@@ -43,7 +43,7 @@ function Layout() {
         />
         {/* protected route for answer page */}
         <Route
-          path=":answer/question_id"
+          path="answer/:question_id"
           element={
             <ProtectedRoute>
               <Answer />

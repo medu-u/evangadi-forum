@@ -14,6 +14,7 @@ function Answer() {
 
   const [question, setQuestion] = useState(null);
   const [answers, setAnswers] = useState([]);
+  const [summary, setSummary] = useState("");
   const [loading, setLoading] = useState(false);
   const [answerText, setAnswerText] = useState("");
   const [error, setError] = useState(null);
@@ -44,6 +45,16 @@ function Answer() {
           headers: { Authorization: `Bearer ${token}` },
         });
         setAnswers(responses.data.answers);
+
+        // 3. Fetch answer Summary
+        const summaryResponse = await axios.get(
+          `/answer/${question_id}/summary`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+
+        setSummary(summaryResponse.data.summary);
       } catch (err) {
         if (err.response?.status === 404) {
           setError("Question not found.");
@@ -105,14 +116,41 @@ function Answer() {
   return (
     <div className={styles.container}>
       {/* Question Section */}
+
       {question && (
-        <div className={styles.question_section}>
-          <h2 className={styles.big_title}>QUESTION</h2>
-          <h2 className={styles.tag}>
-            <span className={styles.arrow}>➤</span>
-            <span className={styles.text}>{question.title}</span>
-          </h2>
-          <p className={styles.description}>{question.description}</p>
+        <div className={styles.question_summary_wrapper}>
+          {/* Question */}
+          <div className={styles.question_section}>
+            <h2 className={styles.big_title}>QUESTION</h2>
+            <h2 className={styles.tag}>
+              <span className={styles.arrow}>➤</span>
+              <span className={styles.text}>{question.title}</span>
+            </h2>
+            <p className={styles.description}>{question.description}</p>
+          </div>
+
+          {/* Summary */}
+          {summary && (
+            <div className={styles.summary_section}>
+              <h3>Answer Summary</h3>
+              <p
+                className={`${styles.summary_text} ${
+                  summary ? styles.expanded : ""
+                }`}
+              >
+                {summary}
+              </p>
+
+              {summary.length > 100 && (
+                <button
+                  className={styles.read_more}
+                  onClick={() => setSummary((prev)=>!prev)}
+                >
+                  {summary ? "Read less ▲" : "Read more ▼"}
+                </button>
+              )}
+            </div>
+          )}
         </div>
       )}
 
