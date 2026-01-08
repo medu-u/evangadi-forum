@@ -15,6 +15,7 @@ function Answer() {
   const [question, setQuestion] = useState(null);
   const [answers, setAnswers] = useState([]);
   const [summary, setSummary] = useState("");
+  const [summaryExpanded, setSummaryExpanded] = useState(false);
   const [loading, setLoading] = useState(false);
   const [answerText, setAnswerText] = useState("");
   const [error, setError] = useState(null);
@@ -51,8 +52,7 @@ function Answer() {
           `/answer/${question_id}/summary`,
           {
             headers: { Authorization: `Bearer ${token}` },
-          }
-        );
+          });
 
         setSummary(summaryResponse.data.summary);
       } catch (err) {
@@ -103,8 +103,13 @@ function Answer() {
       setAnswers(responses.data.answers);
       setAnswerText("");
       setError(null);
+
+      // message success
       setSuccess("Answer posted successfully ✅");
+
+      // set timeout
       setTimeout(() => setSuccess(null), 3000);
+
     } catch (err) {
       setError("Failed to post answer. Please try again.");
     } finally {
@@ -134,21 +139,19 @@ function Answer() {
             <div className={styles.summary_section}>
               <h3>Answer Summary</h3>
               <p
-                className={`${styles.summary_text} ${
-                  summary ? styles.expanded : ""
+                className={`${styles.summaryText} ${
+                  summaryExpanded ? styles.expanded : styles.collapsed
                 }`}
               >
                 {summary}
               </p>
 
-              {summary.length > 100 && (
-                <button
-                  className={styles.read_more}
-                  onClick={() => setSummary((prev)=>!prev)}
-                >
-                  {summary ? "Read less ▲" : "Read more ▼"}
-                </button>
-              )}
+              <span
+                className={styles.readMore}
+                onClick={() => setSummaryExpanded(!summaryExpanded)}
+              >
+                {summaryExpanded ? "Show less" : "Read more..."}
+              </span>
             </div>
           )}
         </div>
