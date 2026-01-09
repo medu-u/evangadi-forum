@@ -134,7 +134,7 @@
 }
 
 .answer_form button:hover {
-  background-color: #506bed;
+  background-color: red;
 }
 
 .answer_form button:disabled {
