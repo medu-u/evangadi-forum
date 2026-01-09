@@ -5,7 +5,7 @@ import answerRoutes from "./routes/answerRoute.js";
 import userRoutes from "./routes/userRoute.js";
 import questionRoutes from "./routes/questionRoute.js";
 import authMiddleware from "./middleware/authMiddleware.js";
-import chatRoutes from "./routes/chatRoutes.js";
+import chatRoutes from "./routes/chatRoutes.js"
 import dbConnection from "./db/dbConfig.js";
 
 const app = express();
@@ -25,7 +25,7 @@ app.use(
 app.use(express.json());
 
 dotenv.config();
-const PORT = process.env.PORT || 5500;
+const PORT = process.env.PORT || 5000;
 
 // question routes middleware
 app.use("/api/question", questionRoutes);
