@@ -1,4 +1,4 @@
-// ===================== Desalegn Tsega — Implement Home Page Start =====================
+// // ===================== Desalegn Tsega — Implement Home Page Start =====================
 // React core hooks
 import React, { useContext, useEffect, useState } from "react";
 
@@ -39,7 +39,7 @@ const Home = () => {
   // Fetch all questions from backend
   const fetchData = async () => {
     try {
-      const { data } = await axios.get("/questions/all-list-questions", {
+      const { data } = await axios.get("/question", {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -116,7 +116,7 @@ const Home = () => {
       );
 
       // Show success message
-      setSuccessMessage(("home.deleteSuccess"));
+      // setSuccessMessage(t("home.deleteSuccess"));
       setTimeout(() => setSuccessMessage(""), 3000);
     } catch {
       // Show error message
@@ -135,7 +135,7 @@ const Home = () => {
         {/* Header section */}
         <div className={classes["welcome-section"]}>
           <Link to="/ask" className={classes["ask-question-btn"]}>
-            {("home.askQuestion")}
+            {("Ask Question")}
           </Link>
 
           <div className={classes["welcome-message"]}>
@@ -245,4 +245,3 @@ const Home = () => {
 };
 
 export default Home;
-// ===================== Desalegn Tsega — Implement Home Page End =====================
