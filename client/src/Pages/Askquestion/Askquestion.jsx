@@ -1,9 +1,8 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect } from "react";
 import styles from "./ask.module.css";
 import axios from "../../Api/axiosConfig.js";
 import KeywordExtractor from "keyword-extractor";
 import { useNavigate } from "react-router-dom";
-import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 function Askquestion() {
@@ -204,7 +203,7 @@ function Askquestion() {
 
       <div className={styles.question_form}>
         <div className={styles.question_title}>
-          <h2>Ask Your Question to the Community</h2>
+          <h2>Post Question</h2>
         </div>
 
         {error && (
@@ -215,11 +214,11 @@ function Askquestion() {
 
         <form onSubmit={handleSubmit}>
           <div className={styles.form_group}>
-            <label htmlFor="title">Title</label>
+            {/* <label htmlFor="title">Title</label> */}
             <input
               id="title"
               type="text"
-              placeholder="Be specific and imagine you're asking another person"
+              placeholder="Question Title"
               value={title}
               onChange={handleTitleChange}
               className={formErrors.title ? styles.error_input : ""}
@@ -238,10 +237,10 @@ function Askquestion() {
           </div>
 
           <div className={styles.form_group}>
-            <label htmlFor="description">Description</label>
+            {/* <label htmlFor="description">Description</label> */}
             <textarea
               id="description"
-              placeholder="Include all the information someone would need to answer your question"
+              placeholder="Question detail..."
               value={description}
               onChange={handleDescriptionChange}
               className={formErrors.description ? styles.error_input : ""}
@@ -268,11 +267,13 @@ function Askquestion() {
               id="tag"
               type="text"
               value={tag}
-              readOnly
+              onChange={(e) => setTag(e.target.value)}
               className={styles.tag_input}
+              disabled={loading}
             />
             <div className={styles.input_help}>
-              This tag is auto-generated from your title.
+              This tag is auto-generated from your title. You can edit it if
+              needed.
             </div>
           </div>
 
@@ -282,7 +283,7 @@ function Askquestion() {
               disabled={loading}
               className={loading ? styles.loading_button : ""}
             >
-              {loading ? "Posting..." : "Post Your Question"}
+              {loading ? "Posting..." : "Post "}
             </button>
             <button
               type="button"
