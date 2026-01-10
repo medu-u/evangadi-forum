@@ -175,4 +175,114 @@ const postAnswer = async (req, res) => {
   }
 };
 
+// Edit Answer 
+const editAnswer = async (req, res) => {
+  const { answer_id } = req.params;
+  const { answer } = req.body;
+  const userId = req.user?.userid;
+
+  // Validate answer_id
+  const answerIdNum = parseInt(answer_id, 10);
+  if (isNaN(answerIdNum)) {
+    return res.status(StatusCodes.BAD_REQUEST).json({
+      message: "Invalid answer_id",
+    });
+  }
+
+  // Validate answer content
+  if (!answer) {
+    return res.status(StatusCodes.BAD_REQUEST).json({
+      message: "Answer content is required",
+    });
+  }
+
+  try {
+    // Check if answer exists and belongs to user
+    const [existingAnswer] = await dbConnection.query(
+      "SELECT userid FROM answers WHERE answerid = ?",
+      [answerIdNum]
+    );
+
+    if (existingAnswer.length === 0) {
+      return res.status(StatusCodes.NOT_FOUND).json({
+        message: "Answer not found",
+      });
+    }
+
+    if (existingAnswer[0].userid !== userId) {
+      return res.status(StatusCodes.FORBIDDEN).json({
+        message: "You can only edit your own answers",
+      });
+    }
+
+    // Sanitize answer
+    const sanitizedAnswer = xss(answer);
+
+    // Update answer
+    await dbConnection.query(
+      "UPDATE answers SET answer = ? WHERE answerid = ? AND userid = ?",
+      [sanitizedAnswer, answerIdNum, userId]
+    );
+
+    return res.status(StatusCodes.OK).json({
+      message: "Answer updated successfully",
+    });
+  } catch (error) {
+    console.error("Error editing answer:", error);
+    return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+      message: "Internal server error",
+    });
+  }
+};
+
+//Delete Answer
+const deleteAnswer = async (req, res) => {
+  const { answer_id } = req.params;
+  const userId = req.user?.userid;
+
+  // Validate answer_id
+  const answerIdNum = parseInt(answer_id, 10);
+  if (isNaN(answerIdNum)) {
+    return res.status(StatusCodes.BAD_REQUEST).json({
+      message: "Invalid answer_id",
+    });
+  }
+
+  try {
+    // Check if answer exists and belongs to user
+    const [existingAnswer] = await dbConnection.query(
+      "SELECT userid FROM answers WHERE answerid = ?",
+      [answerIdNum]
+    );
+
+    if (existingAnswer.length === 0) {
+      return res.status(StatusCodes.NOT_FOUND).json({
+        message: "Answer not found",
+      });
+    }
+
+    if (existingAnswer[0].userid !== userId) {
+      return res.status(StatusCodes.FORBIDDEN).json({
+        message: "You can only delete your own answers",
+      });
+    }
+
+    // Delete answer
+    await dbConnection.query(
+      "DELETE FROM answers WHERE answerid = ? AND userid = ?",
+      [answerIdNum, userId]
+    );
+
+    return res.status(StatusCodes.OK).json({
+      message: "Answer deleted successfully",
+    });
+  } catch (error) {
+    console.error("Error deleting answer:", error);
+    return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+      message: "Internal server error",
+    });
+  }
+};
+
+
 export { getAnswers, postAnswer, getAnswerSummary };
