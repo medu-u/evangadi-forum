@@ -2,8 +2,11 @@ import { useRef, useState } from "react";
 import axios from "../../Api/axiosConfig";
 import { useNavigate } from "react-router-dom";
 import classes from "./Login.module.css";
+import { useContext } from "react"; 
+import { AppState } from "../../App";
 
 function Login() {
+   const { setUser } = useContext(AppState);
   const navigate = useNavigate();
   const emailDom = useRef();
   const passwordDom = useRef();
@@ -26,6 +29,7 @@ function Login() {
         password,
       });
       localStorage.setItem("token", data.token);
+      setUser(data.user)
       navigate("/");
     } catch (error) {
       const errorMessage = error?.response?.data?.msg || error.message;
