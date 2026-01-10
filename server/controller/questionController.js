@@ -14,7 +14,8 @@ async function getAllQuestions(req, res) {
         q.userid,
         u.username,
         u.firstname,
-        u.lastname
+        u.lastname,
+        created_at
       FROM questions q 
       JOIN users u ON q.userid = u.userid 
       ORDER BY q.questionid DESC`
@@ -116,4 +117,139 @@ const postQuestion = async (req, res) => {
   }
 };
 
-export { getAllQuestions, getSingleQuestion, postQuestion };
+// EDIT a question
+const editQuestion = async (req, res) => {
+  try {
+    const { questionid } = req.params;
+    const { title, description, tag } = req.body;
+    const userId = req.user?.userid;
+
+    // Validate question ID
+    if (isNaN(questionid)) {
+      return res.status(StatusCodes.BAD_REQUEST).json({
+        message: "Invalid question ID",
+      });
+    }
+
+    // Check if question exists and belongs to the user
+    const [question] = await dbConnection.execute(
+      "SELECT userid FROM questions WHERE questionid = ?",
+      [questionid]
+    );
+
+    if (question.length === 0) {
+      return res.status(StatusCodes.NOT_FOUND).json({
+        message: "Question not found.",
+      });
+    }
+
+    if (question[0].userid !== userId) {
+      return res.status(StatusCodes.FORBIDDEN).json({
+        message: "You can only edit your own questions.",
+      });
+    }
+
+    // Build dynamic update fields
+    const fields = [];
+    const values = [];
+
+    if (title) {
+      fields.push("title = ?");
+      values.push(xss(title));
+    }
+
+    if (description) {
+      fields.push("description = ?");
+      values.push(xss(description));
+    }
+
+    if (tag) {
+      if (tag.length > 20) {
+        return res.status(StatusCodes.BAD_REQUEST).json({
+          message: "Tag must be less than 20 characters",
+        });
+      }
+      fields.push("tag = ?");
+      values.push(xss(tag));
+    }
+
+    if (fields.length === 0) {
+      return res.status(StatusCodes.BAD_REQUEST).json({
+        message: "Nothing to update",
+      });
+    }
+
+    values.push(questionid, userId);
+
+    await dbConnection.execute(
+      `UPDATE questions 
+       SET ${fields.join(", ")} 
+       WHERE questionid = ? AND userid = ?`,
+      values
+    );
+
+    return res.status(StatusCodes.OK).json({
+      message: "Question updated successfully.",
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+      message: "Error updating question",
+    });
+  }
+};
+
+// DELETE a question
+const deleteQuestion = async (req, res) => {
+  try {
+    const { questionid } = req.params;
+    const userId = req.user?.userid;
+
+    // Validate question ID
+    if (isNaN(questionid)) {
+      return res.status(StatusCodes.BAD_REQUEST).json({
+        message: "Invalid question ID",
+      });
+    }
+
+    // Check if question exists and belongs to the user
+    const [question] = await dbConnection.execute(
+      "SELECT userid FROM questions WHERE questionid = ?",
+      [questionid]
+    );
+
+    if (question.length === 0) {
+      return res.status(StatusCodes.NOT_FOUND).json({
+        message: "Question not found.",
+      });
+    }
+
+    if (question[0].userid !== userId) {
+      return res.status(StatusCodes.FORBIDDEN).json({
+        message: "You can only delete your own questions.",
+      });
+    }
+
+    await dbConnection.execute(
+      "DELETE FROM questions WHERE questionid = ? AND userid = ?",
+      [questionid, userId]
+    );
+
+    return res.status(StatusCodes.OK).json({
+      message: "Question deleted successfully.",
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+      message: "Error deleting question",
+    });
+  }
+};
+
+export {
+  getAllQuestions,
+  getSingleQuestion,
+  postQuestion,
+  editQuestion,
+  deleteQuestion,
+};
