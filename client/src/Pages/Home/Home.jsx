@@ -249,56 +249,68 @@ const Home = () => {
                     {/* Question title */}
                     <div className={classes["question-text"]}>{q.title}</div>
                   </div>
-                  <div className="question-tag">
-                    {
-                      q.tag
-                    }
+                  {/* Tag and Date/Time - Right Side */}
+                  <div className={classes["timestamp-container"]}>
+                    {/* Question Tag - Top */}
+                    <div className={classes["question-tag"]}>
+                      {q.tag || "General"}
+                    </div>
+                    
+                    {/* Date and Time - Bottom */}
+                    <span className={classes["timestamp"]}>
+                      {new Date(q.created_at).toLocaleDateString("en-US", {
+                        weekday: "short",
+                        year: "numeric",
+                        month: "short",
+                        day: "numeric",
+                      })}{" "}
+                      at{" "}
+                      {new Date(q.created_at).toLocaleTimeString("en-US", {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                        hour12: true,
+                      })}
+                    </span>
                   </div>
-                  
+
+                  {/* Edit/Delete Actions - Right Side */}
+                  {user?.username === q.username && (
+                    <div className={classes["action-icons"]} onClick={(e) => e.preventDefault()}>
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          navigate(`/edit-question/${q.questionid}`);
+                        }}
+                        className={classes["icon-btn"]}
+                        aria-label="Edit question"
+                      >
+                        <MdEdit size={20} color="blue" />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          handleDelete(q.questionid);
+                        }}
+                        className={classes["icon-btn"]}
+                        aria-label="Delete question"
+                      >
+                        <MdDelete size={20} color="red" />
+                      </button>
+                    </div>
+                  )}
+
                   {/* Right Arrow */}
                   <div className={classes["arrow-container"]}>
                     <ChevronRightIcon className={classes["arrow"]} />
                   </div>
                 </Link>
 
-                {/* Metadata: timestamp + owner actions */}
+                {/* Empty actions container for consistent spacing */}
                 <div className={classes["info-and-actions"]}>
-                  <span className={classes["timestamp"]}>
-                    {/* Improved: Relative time or formatted; consider date-fns for "2 hours ago" */}
-                    {new Date(q.created_at).toLocaleDateString("en-US", {
-                      weekday: "short",
-                      year: "numeric",
-                      month: "short",
-                      day: "numeric",
-                    })}{" "}
-                    at{" "}
-                    {new Date(q.created_at).toLocaleTimeString("en-US", {
-                      hour: "2-digit",
-                      minute: "2-digit",
-                      hour12: true,
-                    })}
-                  </span>
-                  {/* Show edit/delete only for question owner */}
-                  {user?.username === q.username && (
-                    <div className={classes["action-icons"]}>
-                      <button
-                        type="button"
-                        onClick={() => navigate(`/edit-question/${q.questionid}`)}
-                        className={classes["icon-btn"]}
-                        aria-label="Edit question"
-                      >
-                        <MdEdit size={24} color="blue" />
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => handleDelete(q.questionid)}
-                        className={classes["icon-btn"]}
-                        aria-label="Delete question"
-                      >
-                        <MdDelete size={24} color="red" />
-                      </button>
-                    </div>
-                  )}
                 </div>
               </div>
             </div>

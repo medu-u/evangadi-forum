@@ -147,13 +147,14 @@ section {
   border-bottom: 1px solid #ddd;
   gap: 10px;
   cursor: pointer;
-  transition: background-color 0.25s ease, box-shadow 0.25s ease;
+  transition: all 0.3s ease;
+  border-radius: 10px;
 }
 
 .question-item:hover {
-  background-color: #ffe0b3;
-  box-shadow: 0 2px 12px rgba(255, 140, 0, 0.3);
-  border-left: 4px solid #ff8f00;
+  background-color: #a1b5debe;
+  /* box-shadow: 0 4px 20px rgba(255, 140, 0, 0.4); */
+  transform: scale(1.03);
 }
 
 .question-link {
@@ -403,8 +404,9 @@ section {
 /* ===================== Action Icons & Confirmation ===================== */
 .action-icons {
   display: flex;
-  gap: 8px;
+  gap: 6px;
   align-items: center;
+  padding: 0 8px;
 }
 
 .icon-btn {
@@ -523,6 +525,40 @@ section {
 }
 
 .question-link:hover .arrow {
-  color: #e65100;
+  color: #ec5a0c;
   transform: scale(1.3);
+}
+/* Timestamp container on right side with tag and date */
+.timestamp-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-end;
+  min-width: 140px;
+  padding-left: 15px;
+  gap: 8px;
+}
+
+.question-tag {
+  background-color: #161E54;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  max-width: 100px;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.timestamp-container .timestamp {
+  font-size: 12px;
+  color: #6c757d;
+  font-style: italic;
+  line-height: 1.3;
+  text-align: right;
 }
