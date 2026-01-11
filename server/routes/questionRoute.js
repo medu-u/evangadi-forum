@@ -11,7 +11,7 @@ import {
 const router = Router();
 
 // GET all questions
-router.get("/", getAllQuestions);
+router.get("/", authMiddleware, getAllQuestions);
 
 // POST a new question
 router.post("/", authMiddleware, postQuestion);
