@@ -96,7 +96,12 @@ function Answer() {
         headers: { Authorization: `Bearer ${token}` },
       });
 
+      const summaryRes = await axios.get(`/answer/${question_id}/summary`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
       setAnswers(res.data.answers.reverse());
+      setSummary(summaryRes.data.summary || "");
       setSummaryExpanded(false);
       setAnswerText("");
       setError(null);
@@ -119,6 +124,11 @@ function Answer() {
       setAnswers((prev) =>
         prev.filter((a) => a.answer_id !== confirmDeleteAnswerId)
       );
+
+      const summaryRes = await axios.get(`/answer/${question_id}/summary`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setSummary(summaryRes.data.summary || "");
 
       toast.success("Answer deleted");
     } catch {

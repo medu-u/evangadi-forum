@@ -93,22 +93,32 @@ const getAnswerSummary = async (req, res) => {
       .map((a, i) => `Answer ${i + 1}: ${a.answer}`)
       .join("\n\n");
 
-    const prompt = `
-    You are an expert forum moderator. Below is a question and a list of answers.
-    Summarize the main solutions provided by the community. 
-    Keep it under 3 sentences and use a helpful tone.
-
-    Question: ${question[0].title}
-    Description: ${question[0].description}
-
-    Answers:
-    ${allAnswersText}
-`;
+    const messages = [
+      {
+        role: "system",
+        content: `You are a high-precision data summarizer. 
+        TASK: Summarize technical solutions provided in the text.
+        CONSTRAINTS:
+        - DO NOT mention "the community," "users," or "the forum."
+        - DO NOT use introductory phrases like "It seems like" or "The consensus is."
+        - DO NOT explain what you are doing.
+        - Start immediately with the core technical summary.
+        - Maximum 3 concise sentences.`,
+      },
+      {
+        role: "user",
+        content: `Question Title: ${question[0].title}
+        Description: ${question[0].description}
+        
+        Answers to summarize:
+        ${allAnswersText}`,
+      },
+    ];
 
     // 3. Request AI Summary
     const completion = await client.chat.completions.create({
       model: "llama-3.3-70b-versatile",
-      messages: [{ role: "user", content: prompt }],
+      messages,
       temperature: 0.3, // Lower temperature for more factual summaries
     });
 
