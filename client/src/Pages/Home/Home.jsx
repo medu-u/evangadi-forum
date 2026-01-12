@@ -1,5 +1,11 @@
 // ===================== Desalegn Tsega — Home Page =====================
-import React, { useContext, useEffect, useState, useMemo, useCallback } from "react";
+import React, {
+  useContext,
+  useEffect,
+  useState,
+  useMemo,
+  useCallback,
+} from "react";
 import { AppState } from "../../App"; // Global app context for logged-in user
 import { Link, useNavigate } from "react-router-dom"; // Routing
 import axios from "../../Api/axiosConfig"; // Axios instance for API calls
@@ -7,7 +13,6 @@ import classes from "./home.module.css"; // CSS module
 import { MdEdit, MdDelete } from "react-icons/md"; // Edit/Delete icons
 import { IoIosContact } from "react-icons/io"; // User avatar icon
 import ChevronRightIcon from "@mui/icons-material/ChevronRight"; // Arrow icon
-
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -82,7 +87,9 @@ const Home = () => {
     let sortedData = [...questions];
     switch (sortOption) {
       case "Most Recent":
-        sortedData.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+        sortedData.sort(
+          (a, b) => new Date(b.created_at) - new Date(a.created_at)
+        );
         break;
       case "By Questions":
         sortedData.sort((a, b) => a.title.localeCompare(b.title));
@@ -125,7 +132,8 @@ const Home = () => {
       await axios.delete(`/question/${deletedId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      setSuccessMessage("Question deleted successfully");
+      // setSuccessMessage("");
+      toast.success("Question deleted successfully!");
     } catch (error) {
       // Rollback on error
       fetchData(); // Refetch to restore
@@ -142,9 +150,9 @@ const Home = () => {
   };
 
   // ===================== EDIT NAVIGATION =====================
-  const handleEdit = (id) => {
-    navigate(`/edit-question/${id}`);
-  };
+  // const handleEdit = (id) => {
+  //   navigate(`/edit-question/${id}`);
+  // };
 
   // ===================== UI =====================
   return (
@@ -152,11 +160,12 @@ const Home = () => {
       <div className={classes["main-container"]}>
         {/* Header section with Ask Question button and Welcome message */}
         <div className={classes["welcome-section"]}>
-          <Link to="/ask" className={classes["ask-question-btn"]}>
+          <Link to="/askquestion" className={classes["ask-question-btn"]}>
             Ask Question
           </Link>
           <div className={classes["welcome-message"]}>
-            Welcome: <span className={classes["username"]}>{user?.username}</span>
+            Welcome:{" "}
+            <span className={classes["username"]}>{user?.username}</span>
           </div>
         </div>
 
@@ -173,7 +182,7 @@ const Home = () => {
         </div>
 
         {/* Sorting dropdown */}
-         <div className={classes["sort-dropdown"]}>
+        <div className={classes["sort-dropdown"]}>
           <select
             value={sortOption}
             onChange={(e) => setSortOption(e.target.value)}
@@ -184,14 +193,17 @@ const Home = () => {
             <option value="By Questions">By Questions</option>
             <option value="By Tag">By Tag</option>
           </select>
-        </div> 
-        
+        </div>
 
         {/* Fetch Error with Retry */}
         {fetchError && (
           <div className={classes["error-message"]}>
             {fetchError}{" "}
-            <button type="button" onClick={fetchData} className={classes["retry-btn"]}>
+            <button
+              type="button"
+              onClick={fetchData}
+              className={classes["retry-btn"]}
+            >
               Retry
             </button>
           </div>
@@ -213,7 +225,9 @@ const Home = () => {
             aria-modal="true"
             aria-labelledby="confirm-delete-label"
           >
-            <p id="confirm-delete-label">Are you sure you want to delete this question?</p>
+            <p id="confirm-delete-label">
+              Are you sure you want to delete this question?
+            </p>
             <button
               type="button"
               className={`${classes["confirmation-btn"]} ${classes["confirmation-btn-danger"]}`}
@@ -239,12 +253,15 @@ const Home = () => {
             <div className={classes["questions-list"]} key={q.questionid}>
               <div className={classes["question-item"]}>
                 {/* Link to answer page */}
-                <Link to={`/answer/${q.questionid}`} className={classes["question-link"]}>
+                <Link
+                  to={`/answer/${q.questionid}`}
+                  className={classes["question-link"]}
+                >
                   <div className={classes["user-info"]}>
                     {/* User avatar + username */}
                     <div className={classes["user"]}>
                       {q.profile_picture ? (
-                        <img 
+                        <img
                           src={`http://localhost:5501${q.profile_picture}`}
                           alt={q.username}
                           className={classes["user-avatar-img"]}
@@ -263,7 +280,7 @@ const Home = () => {
                     <div className={classes["question-tag"]}>
                       {q.tag || "General"}
                     </div>
-                    
+
                     {/* Date and Time - Bottom */}
                     <span className={classes["timestamp"]}>
                       {new Date(q.created_at).toLocaleDateString("en-US", {
@@ -283,7 +300,10 @@ const Home = () => {
 
                   {/* Edit/Delete Actions - Right Side */}
                   {user?.username === q.username && (
-                    <div className={classes["action-icons"]} onClick={(e) => e.preventDefault()}>
+                    <div
+                      className={classes["action-icons"]}
+                      onClick={(e) => e.preventDefault()}
+                    >
                       <button
                         type="button"
                         onClick={(e) => {
@@ -318,8 +338,7 @@ const Home = () => {
                 </Link>
 
                 {/* Empty actions container for consistent spacing */}
-                <div className={classes["info-and-actions"]}>
-                </div>
+                <div className={classes["info-and-actions"]}></div>
               </div>
             </div>
           ))

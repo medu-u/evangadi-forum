@@ -1,4 +1,4 @@
-import axios from "../../axiosConfig";
+import axios from "../../Api/axiosConfig.js";
 import styles from "./register.module.css";
 import { useState, useRef, useContext } from "react";
 import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
@@ -14,7 +14,7 @@ const Register = () => {
   const lastNameDom = useRef();
   const emailDom = useRef();
   const passwordDom = useRef();
-  const {setUser} = useContext(AppState);
+  const { setUser } = useContext(AppState);
 
   const navigate = useNavigate();
 
