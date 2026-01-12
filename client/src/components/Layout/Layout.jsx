@@ -8,8 +8,11 @@ import NotFound from "../../Pages/NotFound/NotFound";
 import ProtectedRoute from "../ProtectedRoute/ProtectedRoute";
 import Askquestion from "../../Pages/Askquestion/Askquestion.jsx";
 import Answer from "../../Pages/Answer/Answer.jsx";
-import EditQuestion from "../../Pages/Askquestion/EditQuestion.jsx";
+import EditQuestion from "../../Pages/EditQuestion/EditQuestion.jsx";
+import Profile from "../../Pages/Profile/Profile.jsx";
 import EditAnswer from "../../Pages/Answer/EditAnswer.jsx";
+import ForgotPassword from "../../Pages/ForgotPassword/ForgotPassword.jsx";
+import ResetPassword from "../../Pages/ResetPassword/ResetPassword.jsx";
 
 function Layout() {
   return (
@@ -18,16 +21,6 @@ function Layout() {
         {/* Root route. redirect to home if logged in */}
         <Route
           index
-          element={
-            <ProtectedRoute>
-              <Home />
-            </ProtectedRoute>
-          }
-        />
-
-        {/* Protected route for Home */}
-        <Route
-          path="home"
           element={
             <ProtectedRoute>
               <Home />
@@ -52,14 +45,40 @@ function Layout() {
             </ProtectedRoute>
           }
         />
+        {/* protected route for edit question page */}
+        <Route
+          path="edit-question/:questionid"
+          element={
+            <ProtectedRoute>
+              <EditQuestion />
+            </ProtectedRoute>
+          }
+        />
+        {/* protected route for profile page */}
+        <Route
+          path="profile"
+          element={
+            <ProtectedRoute>
+              <Profile />
+            </ProtectedRoute>
+          }
+        />
         {/* Landing page for signin/signup */}
         <Route path=":mode" element={<Landing />} />
-
+    
         {/* Public page */}
         <Route path="howitworks" element={<HowItWorks />} />
+        
+        {/* forgot password  */}
+        <Route path="forgot-password" element={<ForgotPassword />} />
+
+        {/* reset password route */}
+      <Route path="/reset-password/:token" element={<ResetPassword />} />
+
         {/* catch-all redirect for any unknown route */}
         <Route path="*" element={<Navigate to="/404" replace />} />
       </Route>
+      
       <Route
         path="/edit-question/:id"
         element={
@@ -67,7 +86,7 @@ function Layout() {
             <EditQuestion />
           </ProtectedRoute>
         }
-      />{" "}
+      />
       <Route
         path="/edit-answer/:answerid"
         element={
@@ -75,7 +94,7 @@ function Layout() {
             <EditAnswer />
           </ProtectedRoute>
         }
-      />{" "}
+      />
       {/* THIS */}
       <Route path="/404" element={<NotFound />} />
     </Routes>

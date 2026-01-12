@@ -13,6 +13,7 @@ export const useChatbot = () => {
   const [messages, setMessages] = useState([]);
   const [isBotTyping, setIsBotTyping] = useState(false);
   const [isLoadingHistory, setIsLoadingHistory] = useState(true);
+  const [historyLoadingError, setHistoryLoadingError] = useState("");
   const [error, setError] = useState("");
 
 
@@ -23,7 +24,7 @@ export const useChatbot = () => {
 
       try {
         const { data } = await axios.get(
-          "http://localhost:5500/api/chat/history",
+          "http://localhost:5501/api/chat/history",
           {
             headers: { Authorization: `Bearer ${token}` },
           }
@@ -31,6 +32,9 @@ export const useChatbot = () => {
         setMessages(data.history);
       } catch (err) {
         console.error("Could not load history", err.message);
+        const errorMessage =
+          err.response?.data?.message || err.message || "Something went wrong";
+        setHistoryLoadingError(errorMessage)
       } finally {
         setIsLoadingHistory(false);
       }
@@ -63,11 +67,17 @@ export const useChatbot = () => {
     setError("");
 
     // Play sound with a catch block to prevent "Autoplay" browser errors
-    popAudio.play()
+    try {
+      popAudio.play().catch(err => {
+        console.log("Audio play failed:", err.message);
+      });
+    } catch (err) {
+      console.log("Audio initialization failed:", err.message);
+    }
 
     try {
       const { data } = await axios.post(
-        "http://localhost:5500/api/chat",
+        "http://localhost:5501/api/chat",
         { prompt },
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -75,7 +85,13 @@ export const useChatbot = () => {
         }
       );
 
-      notificationAudio.play();
+      try {
+        notificationAudio.play().catch(err => {
+          console.log("Notification audio play failed:", err.message);
+        });
+      } catch (err) {
+        console.log("Notification audio initialization failed:", err.message);
+      }
 
       // Success: Find the message by its unique ID and update the bot response
       setMessages((prev) =>
@@ -122,6 +138,7 @@ export const useChatbot = () => {
     messages,
     isLoadingHistory,
     isBotTyping,
+    historyLoadingError,
     error,
     sendMessage,
     retryLastMessage,
