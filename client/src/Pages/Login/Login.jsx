@@ -1,7 +1,10 @@
-import { useRef, useState } from "react";
+import { useContext, useRef, useState } from "react";
 import axios from "../../Api/axiosConfig";
 import { useNavigate } from "react-router-dom";
 import classes from "./Login.module.css";
+import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
+import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined";
+import { AppState } from "../../App";
 
 function Login() {
   const navigate = useNavigate();
@@ -9,6 +12,7 @@ function Login() {
   const passwordDom = useRef();
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
+  const { setUser } = useContext(AppState);
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -26,6 +30,13 @@ function Login() {
         password,
       });
       localStorage.setItem("token", data.token);
+      
+      const res = await axios.get("/user/check", {
+        headers: {
+          Authorization: `Bearer ${data.token}`,
+        },
+      });
+      setUser(res.data);
       navigate("/");
     } catch (error) {
       const errorMessage = error?.response?.data?.msg || error.message;
@@ -67,7 +78,11 @@ function Login() {
             className={classes.toggle_password}
             onClick={() => setShowPassword(!showPassword)}
           >
-            👁
+            {showPassword ? (
+              <VisibilityOutlinedIcon />
+            ) : (
+              <VisibilityOffOutlinedIcon />
+            )}
           </span>
         </div>
 

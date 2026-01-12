@@ -10,6 +10,9 @@ import Askquestion from "../../Pages/Askquestion/Askquestion.jsx";
 import Answer from "../../Pages/Answer/Answer.jsx";
 import EditQuestion from "../../Pages/EditQuestion/EditQuestion.jsx";
 import Profile from "../../Pages/Profile/Profile.jsx";
+import EditAnswer from "../../Pages/Answer/EditAnswer.jsx";
+import ForgotPassword from "../../Pages/ForgotPassword/ForgotPassword.jsx";
+import ResetPassword from "../../Pages/ResetPassword/ResetPassword.jsx";
 
 function Layout() {
   return (
@@ -24,19 +27,9 @@ function Layout() {
             </ProtectedRoute>
           }
         />
-
-        {/* Protected route for Home */}
-        <Route
-          path="home"
-          element={
-            <ProtectedRoute>
-              <Home />
-            </ProtectedRoute>
-          }
-        />
         {/* protected route for ask question page */}
         <Route
-          path="ask"
+          path="askquestion"
           element={
             <ProtectedRoute>
               <Askquestion />
@@ -72,12 +65,37 @@ function Layout() {
         />
         {/* Landing page for signin/signup */}
         <Route path=":mode" element={<Landing />} />
-
+    
         {/* Public page */}
         <Route path="howitworks" element={<HowItWorks />} />
+        
+        {/* forgot password  */}
+        <Route path="forgot-password" element={<ForgotPassword />} />
+
+        {/* reset password route */}
+      <Route path="/reset-password/:token" element={<ResetPassword />} />
+
         {/* catch-all redirect for any unknown route */}
         <Route path="*" element={<Navigate to="/404" replace />} />
       </Route>
+      
+      <Route
+        path="/edit-question/:id"
+        element={
+          <ProtectedRoute>
+            <EditQuestion />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/edit-answer/:answerid"
+        element={
+          <ProtectedRoute>
+            <EditAnswer />
+          </ProtectedRoute>
+        }
+      />
+      {/* THIS */}
       <Route path="/404" element={<NotFound />} />
     </Routes>
   );

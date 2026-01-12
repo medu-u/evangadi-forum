@@ -2,6 +2,7 @@ import { StatusCodes } from "http-status-codes";
 import dbConnection from "../DB/dbconfig.js";
 import OpenAI from "openai";
 import dotenv from "dotenv";
+import xss from "xss";
 
 const getAnswers = async (req, res) => {
   const { question_id } = req.params;
@@ -33,7 +34,8 @@ const getAnswers = async (req, res) => {
         a.answerid AS answer_id,
         a.answer AS content,
         u.username AS user_name,
-        a.created_at
+        a.created_at,
+        a.userid
     FROM answers a
     JOIN users u ON a.userid = u.userid
     WHERE a.questionid = ?`,
@@ -91,22 +93,32 @@ const getAnswerSummary = async (req, res) => {
       .map((a, i) => `Answer ${i + 1}: ${a.answer}`)
       .join("\n\n");
 
-    const prompt = `
-    You are an expert forum moderator. Below is a question and a list of answers.
-    Summarize the main solutions provided by the community. 
-    Keep it under 3 sentences and use a helpful tone.
-
-    Question: ${question[0].title}
-    Description: ${question[0].description}
-
-    Answers:
-    ${allAnswersText}
-`;
+    const messages = [
+      {
+        role: "system",
+        content: `You are a high-precision data summarizer. 
+        TASK: Summarize technical solutions provided in the text.
+        CONSTRAINTS:
+        - DO NOT mention "the community," "users," or "the forum."
+        - DO NOT use introductory phrases like "It seems like" or "The consensus is."
+        - DO NOT explain what you are doing.
+        - Start immediately with the core technical summary.
+        - Maximum 3 concise sentences.`,
+      },
+      {
+        role: "user",
+        content: `Question Title: ${question[0].title}
+        Description: ${question[0].description}
+        
+        Answers to summarize:
+        ${allAnswersText}`,
+      },
+    ];
 
     // 3. Request AI Summary
     const completion = await client.chat.completions.create({
       model: "llama-3.3-70b-versatile",
-      messages: [{ role: "user", content: prompt }],
+      messages,
       temperature: 0.3, // Lower temperature for more factual summaries
     });
 
@@ -175,4 +187,164 @@ const postAnswer = async (req, res) => {
   }
 };
 
-export { getAnswers, postAnswer, getAnswerSummary };
+// Edit Answer
+const editAnswer = async (req, res) => {
+  const { answer_id } = req.params;
+  const { answer } = req.body;
+  const userId = req.user?.userid;
+
+  // Validate answer_id
+  const answerIdNum = parseInt(answer_id, 10);
+  if (isNaN(answerIdNum)) {
+    return res.status(StatusCodes.BAD_REQUEST).json({
+      message: "Invalid answer_id",
+    });
+  }
+
+  // Validate answer content
+  if (!answer) {
+    return res.status(StatusCodes.BAD_REQUEST).json({
+      message: "Answer content is required",
+    });
+  }
+
+  try {
+    // Check if answer exists and belongs to user
+    const [existingAnswer] = await dbConnection.query(
+      "SELECT userid FROM answers WHERE answerid = ?",
+      [answerIdNum]
+    );
+
+    if (existingAnswer.length === 0) {
+      return res.status(StatusCodes.NOT_FOUND).json({
+        message: "Answer not found",
+      });
+    }
+
+    if (existingAnswer[0].userid !== userId) {
+      return res.status(StatusCodes.FORBIDDEN).json({
+        message: "You can only edit your own answers",
+      });
+    }
+
+    // Sanitize answer
+    const sanitizedAnswer = xss(answer);
+
+    // Update answer
+    await dbConnection.query(
+      "UPDATE answers SET answer = ? WHERE answerid = ? AND userid = ?",
+      [sanitizedAnswer, answerIdNum, userId]
+    );
+
+    return res.status(StatusCodes.OK).json({
+      message: "Answer updated successfully",
+    });
+  } catch (error) {
+    console.error("Error editing answer:", error);
+    return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+      message: "Internal server error",
+    });
+  }
+};
+
+//Delete Answer
+const deleteAnswer = async (req, res) => {
+  const { answer_id } = req.params;
+  const userId = req.user?.userid;
+
+  // Validate answer_id
+  const answerIdNum = parseInt(answer_id, 10);
+  if (isNaN(answerIdNum)) {
+    return res.status(StatusCodes.BAD_REQUEST).json({
+      message: "Invalid answer_id",
+    });
+  }
+
+  try {
+    // Check if answer exists and belongs to user
+    const [existingAnswer] = await dbConnection.query(
+      "SELECT userid FROM answers WHERE answerid = ?",
+      [answerIdNum]
+    );
+
+    if (existingAnswer.length === 0) {
+      return res.status(StatusCodes.NOT_FOUND).json({
+        message: "Answer not found",
+      });
+    }
+
+    if (existingAnswer[0].userid !== userId) {
+      return res.status(StatusCodes.FORBIDDEN).json({
+        message: "You can only delete your own answers",
+      });
+    }
+
+    // Delete answer
+    await dbConnection.query(
+      "DELETE FROM answers WHERE answerid = ? AND userid = ?",
+      [answerIdNum, userId]
+    );
+
+    return res.status(StatusCodes.OK).json({
+      message: "Answer deleted successfully",
+    });
+  } catch (error) {
+    console.error("Error deleting answer:", error);
+    return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+      message: "Internal server error",
+    });
+  }
+};
+const getSingleAnswer = async (req, res) => {
+  const { answer_id } = req.params;
+
+  // Validate answer_id
+  const answerIdNum = parseInt(answer_id, 10);
+  if (isNaN(answerIdNum)) {
+    return res.status(StatusCodes.BAD_REQUEST).json({
+      message: "Invalid answer_id",
+    });
+  }
+
+  try {
+    const [answer] = await dbConnection.query(
+      `
+      SELECT 
+        a.answerid,
+        a.answer,
+        a.questionid,
+        a.userid,
+        a.created_at,
+        u.username
+      FROM answers a
+      JOIN users u ON a.userid = u.userid
+      WHERE a.answerid = ?
+      `,
+      [answerIdNum]
+    );
+
+    if (answer.length === 0) {
+      return res.status(StatusCodes.NOT_FOUND).json({
+        message: "Answer not found",
+      });
+    }
+
+    return res.status(StatusCodes.OK).json({
+      answer: answer[0],
+    });
+  } catch (error) {
+    console.error("Error fetching single answer:", error);
+    return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+      message: "Internal server error",
+    });
+  }
+};
+
+export {
+  getAnswers,
+  postAnswer,
+  getAnswerSummary,
+  editAnswer,
+  deleteAnswer,
+  getSingleAnswer,
+};

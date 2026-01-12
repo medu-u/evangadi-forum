@@ -8,6 +8,9 @@ import { MdEdit, MdDelete } from "react-icons/md"; // Edit/Delete icons
 import { IoIosContact } from "react-icons/io"; // User avatar icon
 import ChevronRightIcon from "@mui/icons-material/ChevronRight"; // Arrow icon
 
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 const Home = () => {
   const { user } = useContext(AppState); // Logged-in user
   const navigate = useNavigate(); // Navigate programmatically
@@ -136,6 +139,11 @@ const Home = () => {
         setErrorMessage("");
       }, 3000);
     }
+  };
+
+  // ===================== EDIT NAVIGATION =====================
+  const handleEdit = (id) => {
+    navigate(`/edit-question/${id}`);
   };
 
   // ===================== UI =====================

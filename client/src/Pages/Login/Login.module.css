@@ -1,11 +1,10 @@
 .login_container {
-   width: 400px;
-  margin: 7rem auto 5rem;
+   width:90%;
   padding: 1.5rem;
   background: #fff;
   border-radius: 8px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  font-family: Arial, sans-serif;
+  /* font-family: Arial, sans-serif; */
 }
 
 .title {
@@ -47,6 +46,8 @@
   top: 50%;
   transform: translateY(-50%);
   cursor: pointer;
+  color: #9ca3af;
+
 }
 
 .forgot {
