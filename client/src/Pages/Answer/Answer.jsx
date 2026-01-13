@@ -228,9 +228,9 @@ function Answer() {
             <div className={styles.answer_main}>
               <div className={styles.user_info}>
                 <div className={styles.avatar}>
-                  {user?.userid === ans.userid && user?.profile_picture ? (
+                  {ans?.profile_picture ? (
                     <img
-                      src={`${API_BASE_URL}${user.profile_picture}`}
+                      src={`${API_BASE_URL}${ans?.profile_picture}`}
                       alt="Profile"
                       className={styles.profile_image}
                     />

@@ -253,9 +253,9 @@ const Home = () => {
                   <div className={classes["user-info"]}>
                     {/* User avatar + username */}
                     <div className={classes["user"]}>
-                      {user?.userid === q.userid && user?.profile_picture ? (
+                      {q?.profile_picture ? (
                         <img
-                          src={`${API_BASE_URL}${user.profile_picture}`}
+                          src={`${API_BASE_URL}${q?.profile_picture}`}
                           alt="Profile"
                           className={classes.profile_image}
                         />
