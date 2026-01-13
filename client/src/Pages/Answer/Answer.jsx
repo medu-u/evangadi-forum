@@ -15,9 +15,13 @@ function Answer() {
 
   const [question, setQuestion] = useState(null);
   const [answers, setAnswers] = useState([]);
-  const [summary, setSummary] = useState("");
-  const [summaryExpanded, setSummaryExpanded] = useState(false);
+  const [summary, setSummary] = useState(""); 
   const [answerText, setAnswerText] = useState("");
+  const [summaryExpanded, setSummaryExpanded] = useState(false);
+
+  const [expandedAnswerId, setExpandedAnswerId] = useState(null);
+
+
 
   const [answersLoading, setAnswersLoading] = useState(true);
   const [posting, setPosting] = useState(false);
@@ -26,7 +30,7 @@ function Answer() {
 
   /* ---------------- SUMMARY HELPERS ---------------- */
 
-  const MAX_LENGTH = 100;
+  const MAX_LENGTH = 150;
 
   const shouldShowReadMore = () => summary.length > MAX_LENGTH;
 
@@ -38,6 +42,21 @@ function Answer() {
       : summary;
   };
 
+  const ANSWER_LIMIT = 220;
+
+  const getAnswerText = (text, answerId) => {
+    if (expandedAnswerId === answerId) return text;
+
+    return text.length > ANSWER_LIMIT
+      ? text.slice(0, ANSWER_LIMIT) + "..."
+      : text;
+  };
+
+  const shouldShowAnswerReadMore = (text) => {
+    return text.length > ANSWER_LIMIT;
+  };
+  
+  
   /* ---------------- AUTH CHECK ---------------- */
 
   useEffect(() => {
@@ -224,19 +243,105 @@ function Answer() {
         )}
 
         {answers.map((ans) => (
-          <div key={ans.answer_id} className={styles.answer_card}>
-            <div className={styles.user_info}>
-              <div className={styles.avatar}>
-                {ans.user_name
-                  ?.split(" ")
-                  .map((n) => n[0])
-                  .join("")
-                  .toUpperCase()}
-              </div>
-              <span>{ans.user_name}</span>
-            </div>
+          // <div key={ans.answer_id} className={styles.answer_card}>
+          //   <div className={styles.user_info}>
+          //     <div className={styles.avatar}>
+          //       {ans.user_name
+          //         ?.split(" ")
+          //         .map((n) => n[0])
+          //         .join("")
+          //         .toUpperCase()}
+          //     </div>
+          //     <span>{ans.user_name}</span>
+          //   </div>
 
-            <div className={styles.content}>{ans.content}</div>
+          //   <div className={styles.content}>
+          //     {getAnswerText(ans.content, ans.answer_id)}
+
+          //     {shouldShowAnswerReadMore(ans.content) && (
+          //       <span
+          //         className={styles.readMores}
+          //         onClick={() =>
+          //           setExpandedAnswerId(
+          //             expandedAnswerId === ans.answer_id ? null : ans.answer_id
+          //           )
+          //         }
+          //       >
+          //         {expandedAnswerId === ans.answer_id
+          //           ? " Show less"
+          //           : " Read more..."}
+          //       </span>
+          //     )}
+          //   </div>
+
+          //   <div className={styles.answer_footer}>
+          //     <span className={styles.timestamp}>
+          //       {new Date(ans.created_at).toLocaleDateString("en-US", {
+          //         weekday: "short",
+          //         year: "numeric",
+          //         month: "short",
+          //         day: "numeric",
+          //       })}{" "}
+          //       at{" "}
+          //       {new Date(ans.created_at).toLocaleTimeString("en-US", {
+          //         hour: "2-digit",
+          //         minute: "2-digit",
+          //         hour12: true,
+          //       })}
+          //     </span>
+
+          //     {user?.userid === ans.userid && (
+          //       <div className={styles.action_icons}>
+          //         <MdEdit
+          //           size={22}
+          //           color="blue"
+          //           title="Edit"
+          //           onClick={() => navigate(`/edit-answer/${ans.answer_id}`)}
+          //         />
+          //         <MdDelete
+          //           size={22}
+          //           color="red"
+          //           title="Delete"
+          //           onClick={() => setConfirmDeleteAnswerId(ans.answer_id)}
+          //         />
+          //       </div>
+          //     )}
+          //   </div>
+          // </div>
+          <div key={ans.answer_id} className={styles.answer_card}>
+            <div className={styles.answer_main}>
+              <div className={styles.user_info}>
+                <div className={styles.avatar}>
+                  {ans.user_name
+                    ?.split(" ")
+                    .map((n) => n[0])
+                    .join("")
+                    .toUpperCase()}
+                </div>
+                <span>{ans.user_name}</span>
+              </div>
+
+              <div className={styles.content}>
+                {getAnswerText(ans.content, ans.answer_id)}
+
+                {shouldShowAnswerReadMore(ans.content) && (
+                  <span
+                    className={styles.readMores}
+                    onClick={() =>
+                      setExpandedAnswerId(
+                        expandedAnswerId === ans.answer_id
+                          ? null
+                          : ans.answer_id
+                      )
+                    }
+                  >
+                    {expandedAnswerId === ans.answer_id
+                      ? " Show less"
+                      : " Read more..."}
+                  </span>
+                )}
+              </div>
+            </div>
 
             <div className={styles.answer_footer}>
               <span className={styles.timestamp}>
@@ -256,18 +361,8 @@ function Answer() {
 
               {user?.userid === ans.userid && (
                 <div className={styles.action_icons}>
-                  <MdEdit
-                    size={22}
-                    color="blue"
-                    title="Edit"
-                    onClick={() => navigate(`/edit-answer/${ans.answer_id}`)}
-                  />
-                  <MdDelete
-                    size={22}
-                    color="red"
-                    title="Delete"
-                    onClick={() => setConfirmDeleteAnswerId(ans.answer_id)}
-                  />
+                  <MdEdit size={22} color="blue" />
+                  <MdDelete size={22} color="red" />
                 </div>
               )}
             </div>
@@ -307,3 +402,5 @@ function Answer() {
 }
 
 export default Answer;
+
+

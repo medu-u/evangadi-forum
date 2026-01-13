@@ -118,6 +118,7 @@ const getAnswerSummary = async (req, res) => {
     // 3. Request AI Summary
     const completion = await client.chat.completions.create({
       model: "llama-3.3-70b-versatile",
+      // model:"openai/gpt-oss-20b",
       messages,
       temperature: 0.3, // Lower temperature for more factual summaries
     });
